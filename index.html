@@ -59,14 +59,33 @@
   <div id="output">Your ideas will appear here.</div>
 
   <script>
-    async function generateIdeas() {
-      const niche = document.getElementById("niche").value.trim();
-      const style = document.getElementById("style").value;
-      const output = document.getElementById("output");
+   <script>
+const ideas = [
+  "Day in the life of your business",
+  "3 mistakes people make in your industry",
+  "Behind the scenes of your process",
+  "Before vs after transformation",
+  "Customer testimonial spotlight",
+  "Quick tip your audience can use today",
+  "What you wish customers knew",
+  "Your most popular product explained",
+  "Answer a common question",
+  "This or that poll"
+];
 
-      if (!niche) {
-        output.innerText = "Please enter a business or niche first.";
-        return;
+function generateIdeas() {
+  const output = document.getElementById("output");
+
+  output.innerText = "Generating...";
+
+  setTimeout(() => {
+    let shuffled = ideas.sort(() => 0.5 - Math.random());
+    let selected = shuffled.slice(0, 5);
+
+    output.innerText = selected.join("\n\n");
+  }, 500);
+}
+</script>
       }
 
       output.innerText = "Generating...";
