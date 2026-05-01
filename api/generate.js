@@ -31,9 +31,15 @@ Keep the ideas easy for a small business owner to create without a professional 
 
     const data = await response.json();
 
-    res.status(200).json({
-      result: data.choices[0].message.content
-    });
+if (!data.choices || !data.choices[0]) {
+  return res.status(500).json({
+    error: data.error?.message || "OpenAI did not return a valid response."
+  });
+}
+
+res.status(200).json({
+  result: data.choices[0].message.content
+});
   } catch (error) {
     res.status(500).json({
       error: "Something went wrong generating ideas."
