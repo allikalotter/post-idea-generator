@@ -1,85 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Post Idea Generator</title>
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       padding: 40px;
-      max-width: 600px;
+      max-width: 650px;
       margin: auto;
+      background: #f8f5f0;
+      color: #222;
     }
+
     input, select, button {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
     }
+
+    button {
+      background: #222;
+      color: white;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
     #output {
-      margin-top: 20px;
+      margin-top: 25px;
       white-space: pre-wrap;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      min-height: 80px;
     }
   </style>
 </head>
 <body>
 
-<h1>Post Idea Generator</h1>
-<p>Generate simple content ideas for your business</p>
+  <h1>Post Idea Generator</h1>
+  <p>Generate simple content ideas for your business in seconds.</p>
 
-<input id="niche" placeholder="e.g. cafe, real estate, fitness coach">
+  <input id="niche" placeholder="e.g. cafe, real estate, fitness coach" />
 
-<select id="style">
-  <option>Educational</option>
-  <option>Behind the scenes</option>
-  <option>Promotional</option>
-  <option>Fun / relatable</option>
-  <option>Mix of everything</option>
-</select>
+  <select id="style">
+    <option>Educational</option>
+    <option>Behind the scenes</option>
+    <option>Promotional</option>
+    <option>Fun / relatable</option>
+    <option>Mix of everything</option>
+  </select>
 
-<button onclick="generateIdeas()">Generate Ideas</button>
+  <button onclick="generateIdeas()">Generate Ideas</button>
 
-<div id="output"></div>
+  <div id="output">Your ideas will appear here.</div>
 
-<script>
-async function generateIdeas() {
-  const niche = document.getElementById("niche").value;
-  const style = document.getElementById("style").value;
-  const output = document.getElementById("output");
+  <script>
+    async function generateIdeas() {
+      const niche = document.getElementById("niche").value.trim();
+      const style = document.getElementById("style").value;
+      const output = document.getElementById("output");
 
-  if (!niche) {
-    output.innerText = "Please enter a business or niche first.";
-    return;
-  }
+      if (!niche) {
+        output.innerText = "Please enter a business or niche first.";
+        return;
+      }
 
-  output.innerText = "Generating...";
+      output.innerText = "Generating...";
 
-  try {
-    const response = await fetch("/api/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        niche: niche,
-        style: style
-      })
-    });
+      try {
+        const response = await fetch("/api/generate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ niche, style })
+        });
 
-    const data = await response.json();
+        const data = await response.json();
 
-    if (data.result) {
-      output.innerText = data.result;
-    } else if (data.error) {
-      output.innerText = "Error: " + data.error;
-    } else {
-      output.innerText = "Something went wrong. No result was returned.";
+        console.log("API response:", data);
+
+        if (data.result) {
+          output.innerText = data.result;
+        } else if (data.error) {
+          output.innerText = "Error: " + data.error;
+        } else {
+          output.innerText = "No result returned. Full response: " + JSON.stringify(data);
+        }
+      } catch (error) {
+        output.innerText = "Connection error: " + error.message;
+      }
     }
-
-  } catch (error) {
-    output.innerText = "Something went wrong connecting to the generator.";
-  }
-}
-</script>
+  </script>
 
 </body>
 </html>
