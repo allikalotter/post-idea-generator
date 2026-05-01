@@ -1,20 +1,30 @@
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({ error: "Only POST requests are allowed." });
+  }
+
+  const { niche, style } = req.body;
+
+  if (!niche) {
+    return res.status(400).json({ error: "Missing niche." });
+  }
+
+  if (!process.env.OPENAI_API_KEY) {
+    return res.status(500).json({ error: "OPENAI_API_KEY is missing in Vercel." });
   }
 
   try {
-    const { niche, style } = req.body;
+    const prompt = `Generate 10 simple social media post ideas for a ${niche} business.
 
-    if (!niche) {
-      return res.status(400).json({ error: "Missing niche." });
-    }
+Content style: ${style}
 
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({ error: "Missing OPENAI_API_KEY in Vercel." });
-    }
+For each idea, include:
+1. Post title
+2. Content angle
+3. Caption hook
+4. Suggested format
 
-    const prompt = `Generate 10 simple, practical social media post ideas for a ${niche} business. The content style should be ${style}. For each idea, include a post title, content angle, caption hook, and suggested format. Keep the ideas easy for a small business owner to create.`;
+Keep the ideas practical and easy for a small business owner to create.`;
 
     const openaiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -26,8 +36,7 @@ export default async function handler(req, res) {
         model: "gpt-4o-mini",
         messages: [
           { role: "user", content: prompt }
-        ],
-        temperature: 0.8
+        ]
       })
     });
 
@@ -43,7 +52,7 @@ export default async function handler(req, res) {
 
     if (!result) {
       return res.status(500).json({
-        error: "No content was returned from OpenAI."
+        error: "OpenAI returned no result."
       });
     }
 
