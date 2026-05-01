@@ -72,52 +72,85 @@
   <div id="output">Your ideas will appear here.</div>
 
   <script>
-    const ideas = [
-      "Day in the life of your business",
-      "3 mistakes people make in your industry",
-      "Behind the scenes of your process",
-      "Before vs after transformation",
-      "Customer testimonial spotlight",
-      "Quick tip your audience can use today",
-      "What you wish customers knew",
-      "Your most popular product explained",
-      "Answer a common question",
-      "This or that poll",
-      "Top 5 tips for beginners in your niche",
-      "A common myth about your industry",
-      "Show your workspace setup",
-      "Your morning routine",
-      "How your product/service works",
-      "React to a trending topic",
-      "Share a customer story",
-      "Mistakes you made starting out",
-      "Things you’d do differently",
-      "Quick behind-the-scenes clip"
-    ];
+    <script>
+const ideas = [
+  "Day in the life of your business",
+  "3 mistakes people make in your industry",
+  "Behind the scenes of your process",
+  "Before vs after transformation",
+  "Customer testimonial spotlight",
+  "Quick tip your audience can use today",
+  "What you wish customers knew",
+  "Your most popular product explained",
+  "Answer a common question",
+  "This or that poll",
+  "Top 5 tips for beginners in your niche",
+  "A common myth about your industry",
+  "Show your workspace setup",
+  "Your morning routine",
+  "How your product/service works",
+  "React to a trending topic",
+  "Share a customer story",
+  "Mistakes you made starting out",
+  "Things you’d do differently",
+  "Quick behind-the-scenes clip",
+  "Meet the owner",
+  "Meet the team",
+  "Pack an order with us",
+  "How we prepare for a busy day",
+  "Things people don’t realise about our industry",
+  "Our most asked question answered",
+  "The story behind our business",
+  "A product or service explained simply",
+  "What makes us different",
+  "Our favourite customer moment",
+  "One thing we wish every customer knew",
+  "A mistake we made and what we learned",
+  "A behind-the-scenes problem we solved",
+  "A satisfying process video",
+  "A mini tutorial",
+  "A funny customer habit",
+  "A relatable business owner moment",
+  "What’s in our workspace",
+  "A weekly recap",
+  "A transformation story"
+];
 
-    function generateIdeas() {
-      const niche = document.getElementById("niche").value.trim();
-      const style = document.getElementById("style").value;
-      const output = document.getElementById("output");
+function generateIdeas() {
+  const niche = document.getElementById("niche").value.trim();
+  const style = document.getElementById("style").value;
+  const output = document.getElementById("output");
 
-      if (!niche) {
-        output.innerText = "Please enter a business or niche first.";
-        return;
-      }
+  if (!niche) {
+    output.innerText = "Please enter a business or niche first.";
+    return;
+  }
 
-      output.innerText = "Generating...";
+  output.innerText = "Generating...";
 
-      setTimeout(() => {
-        let shuffled = ideas.sort(() => 0.5 - Math.random());
-        let selected = shuffled.slice(0, 5);
+  setTimeout(() => {
+    let shuffled = [...ideas].sort(() => Math.random() - 0.5);
+    let selected = shuffled.slice(0, 5);
 
-        const formatted = selected.map((idea, index) => {
-          return `${index + 1}. ${idea} (${style})`;
-        }).join("\n\n");
-
-        output.innerText = `Here are some ${style.toLowerCase()} ideas for a ${niche}:\n\n${formatted}`;
-      }, 500);
+    // Prevent same ideas twice in a row
+    while (
+      output.dataset.lastIdeas &&
+      output.dataset.lastIdeas === selected.join("|")
+    ) {
+      shuffled = [...ideas].sort(() => Math.random() - 0.5);
+      selected = shuffled.slice(0, 5);
     }
+
+    output.dataset.lastIdeas = selected.join("|");
+
+    const formatted = selected.map((idea, index) => {
+      return `${index + 1}. ${idea} (${style})`;
+    }).join("\n\n");
+
+    output.innerText = `Here are some ${style.toLowerCase()} ideas for a ${niche}:\n\n${formatted}`;
+  }, 500);
+}
+</script>
   </script>
 
 </body>
