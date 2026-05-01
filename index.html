@@ -44,24 +44,40 @@
 async function generateIdeas() {
   const niche = document.getElementById("niche").value;
   const style = document.getElementById("style").value;
+  const output = document.getElementById("output");
 
-  const prompt = `Generate 10 simple social media post ideas for a ${niche} business. Style: ${style}. Include a title, angle, hook, and format.`;
+  if (!niche) {
+    output.innerText = "Please enter a business or niche first.";
+    return;
+  }
 
-  document.getElementById("output").innerText = "Generating...";
+  output.innerText = "Generating...";
 
-  const response = await fetch("/api/generate", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    niche: niche,
-    style: style
-  })
-});
+  try {
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        niche: niche,
+        style: style
+      })
+    });
 
-const data = await response.json();
-document.getElementById("output").innerText = data.result;
+    const data = await response.json();
+
+    if (data.result) {
+      output.innerText = data.result;
+    } else if (data.error) {
+      output.innerText = "Error: " + data.error;
+    } else {
+      output.innerText = "Something went wrong. No result was returned.";
+    }
+
+  } catch (error) {
+    output.innerText = "Something went wrong connecting to the generator.";
+  }
 }
 </script>
 
