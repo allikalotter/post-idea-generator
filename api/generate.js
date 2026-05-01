@@ -6,15 +6,17 @@ export default async function handler(req, res) {
   try {
     const { niche, style } = req.body;
 
-    const prompt = `Generate 10 simple, practical social media post ideas for a ${niche} business. The content style should be ${style}. For each idea, include:
-- Post title
-- Content angle
-- Caption hook
-- Suggested format
+    if (!niche) {
+      return res.status(400).json({ error: "Missing niche." });
+    }
 
-Keep the ideas easy for a small business owner to create without a professional content team.`;
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(500).json({ error: "Missing OPENAI_API_KEY in Vercel." });
+    }
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const prompt = `Generate 10 simple, practical social media post ideas for a ${niche} business. The content style should be ${style}. For each idea, include a post title, content angle, caption hook, and suggested format. Keep the ideas easy for a small business owner to create.`;
+
+    const openaiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,20 +31,27 @@ Keep the ideas easy for a small business owner to create without a professional 
       })
     });
 
-    const data = await response.json();
+    const data = await openaiResponse.json();
 
-if (!data.choices || !data.choices[0]) {
-  return res.status(500).json({
-    error: data.error?.message || "OpenAI did not return a valid response."
-  });
-}
+    if (!openaiResponse.ok) {
+      return res.status(500).json({
+        error: data.error?.message || "OpenAI request failed."
+      });
+    }
 
-res.status(200).json({
-  result: data.choices[0].message.content
-});
+    const result = data.choices?.[0]?.message?.content;
+
+    if (!result) {
+      return res.status(500).json({
+        error: "No content was returned from OpenAI."
+      });
+    }
+
+    return res.status(200).json({ result });
+
   } catch (error) {
-    res.status(500).json({
-      error: "Something went wrong generating ideas."
+    return res.status(500).json({
+      error: error.message || "Something went wrong."
     });
   }
 }
