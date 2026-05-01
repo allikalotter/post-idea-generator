@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Post Idea Generator</title>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,13 +14,23 @@
       color: #222;
     }
 
+    h1 {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 20px;
+    }
+
     input, select, button {
       width: 100%;
       padding: 12px;
       margin-top: 10px;
-      border-radius: 8px;
+      border-radius: 10px;
       border: 1px solid #ccc;
       box-sizing: border-box;
+      font-size: 16px;
     }
 
     button {
@@ -27,24 +38,26 @@
       color: white;
       cursor: pointer;
       margin-top: 15px;
+      font-weight: bold;
     }
 
     #output {
       margin-top: 25px;
       white-space: pre-wrap;
-      background: white;
+      background: #eee;
       padding: 20px;
       border-radius: 12px;
-      min-height: 80px;
+      min-height: 100px;
     }
   </style>
 </head>
+
 <body>
 
   <h1>Post Idea Generator</h1>
   <p>Generate simple content ideas for your business in seconds.</p>
 
-  <input id="niche" placeholder="e.g. cafe, real estate, fitness coach" />
+  <input id="niche" placeholder="e.g. cafe, real estate, fitness coach">
 
   <select id="style">
     <option>Educational</option>
@@ -59,60 +72,51 @@
   <div id="output">Your ideas will appear here.</div>
 
   <script>
-   <script>
-const ideas = [
-  "Day in the life of your business",
-  "3 mistakes people make in your industry",
-  "Behind the scenes of your process",
-  "Before vs after transformation",
-  "Customer testimonial spotlight",
-  "Quick tip your audience can use today",
-  "What you wish customers knew",
-  "Your most popular product explained",
-  "Answer a common question",
-  "This or that poll"
-];
+    const ideas = [
+      "Day in the life of your business",
+      "3 mistakes people make in your industry",
+      "Behind the scenes of your process",
+      "Before vs after transformation",
+      "Customer testimonial spotlight",
+      "Quick tip your audience can use today",
+      "What you wish customers knew",
+      "Your most popular product explained",
+      "Answer a common question",
+      "This or that poll",
+      "Top 5 tips for beginners in your niche",
+      "A common myth about your industry",
+      "Show your workspace setup",
+      "Your morning routine",
+      "How your product/service works",
+      "React to a trending topic",
+      "Share a customer story",
+      "Mistakes you made starting out",
+      "Things you’d do differently",
+      "Quick behind-the-scenes clip"
+    ];
 
-function generateIdeas() {
-  const output = document.getElementById("output");
+    function generateIdeas() {
+      const niche = document.getElementById("niche").value.trim();
+      const style = document.getElementById("style").value;
+      const output = document.getElementById("output");
 
-  output.innerText = "Generating...";
-
-  setTimeout(() => {
-    let shuffled = ideas.sort(() => 0.5 - Math.random());
-    let selected = shuffled.slice(0, 5);
-
-    output.innerText = selected.join("\n\n");
-  }, 500);
-}
-</script>
+      if (!niche) {
+        output.innerText = "Please enter a business or niche first.";
+        return;
       }
 
       output.innerText = "Generating...";
 
-      try {
-        const response = await fetch("/api/generate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ niche, style })
-        });
+      setTimeout(() => {
+        let shuffled = ideas.sort(() => 0.5 - Math.random());
+        let selected = shuffled.slice(0, 5);
 
-        const data = await response.json();
+        const formatted = selected.map((idea, index) => {
+          return `${index + 1}. ${idea} (${style})`;
+        }).join("\n\n");
 
-        console.log("API response:", data);
-
-        if (data.result) {
-          output.innerText = data.result;
-        } else if (data.error) {
-          output.innerText = "Error: " + data.error;
-        } else {
-          output.innerText = "No result returned. Full response: " + JSON.stringify(data);
-        }
-      } catch (error) {
-        output.innerText = "Connection error: " + error.message;
-      }
+        output.innerText = `Here are some ${style.toLowerCase()} ideas for a ${niche}:\n\n${formatted}`;
+      }, 500);
     }
   </script>
 
